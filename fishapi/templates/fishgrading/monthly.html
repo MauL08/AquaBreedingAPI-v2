@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block name %}{{name}}{% endblock %}
+{% block plugins_css %}
+<link rel="stylesheet"
+    href="{{url_for('static', filename='node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css')}}">
+{% endblock %}
+{% block content %}
+<!-- Main Content -->
+<div class="main-content">
+    <section class="section">
+        <div class="section-header">
+            <h1>Grading Ikan Bulanan</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="#">Grading Ikan Bulanan</a></div>
+                <div class="breadcrumb-item"><a href="#">Bulanan</a></div>
+            </div>
+        </div>
+
+        <div class="section-body">
+            <div class="card">
+                <div class="card-body p-5">
+                    <canvas id="myChart" height="100"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive p-5">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <label>Pilih Bulan</label>
+                                <input id="form-date" type="text" class="form-control datepicker" value="{{date}}">
+                                <input id="link-root" type="text" class="form-control"
+                                    value="{{url_for('fishGradingRecap')}}" hidden>
+                                <input id="link-graph" type="text" class="form-control" value="{{link_graph}}" hidden>
+                                <br>
+                                <button type="button" class="btn btn-success btn-block"
+                                    onclick="setDate()">Search</button>
+                            </div>
+                        </div>
+                        <br>
+                        <h5>Hasil untuk Bulan {{date_read}}</h5>
+                        <br>
+                        <table id="mainTable" class="table table-striped table-md">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Tanggal Grading</th>
+                                    <th>Kolam</th>
+                                    <th>Masa Budidaya</th>
+                                    <th>Tipe Ikan</th>
+                                    <th>Jumlah Sample</th>
+                                    <th>Rata2 Panjang Ikan</th>
+                                    <th>Rata2 Berat Ikan</th>
+                                    <th>Batas Berat</th>
+                                    <th>Hasil</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for index, fishgrading in fishgradings %}
+                                <tr>
+                                    <td>{{index}}</td>
+                                    <td>{{fishgrading["date"]}}</td>
+                                    <td>{{fishgrading["pond"]["alias"]}}</td>
+                                    <td>{{fishgrading["pond_activation"]["date"]}}</td>
+                                    <td>{{fishgrading["fish_type"]}}</td>
+                                    <td>{{fishgrading["sampling_amount"]}}</td>
+                                    <td>{{fishgrading["avg_fish_long"]}} cm</td>
+                                    <td>{{fishgrading["avg_fish_weight"]}} Gram</td>
+                                    <td>
+                                        <p>undersize: <
+                                                {{fishgrading['avg_fish_weight']*fishgrading['constanta_undersize']}}
+                                                Gram</p>
+                                                <p>oversize: >=
+                                                    {{fishgrading['avg_fish_weight']*fishgrading['constanta_oversize']}}
+                                                    Gram
+                                                </p>
+                                    </td>
+                                    <td>
+                                        <p>undersize: {{fishgrading['amount_undersize_fish']}}</p>
+                                        <p>normal: {{fishgrading['amount_normal_fish']}}</p>
+                                        <p>oversize: {{fishgrading['amount_oversize_fish']}}</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Grading Date</th>
+                                    <th>Pond</th>
+                                    <th>Activation Date</th>
+                                    <th>Fish Type</th>
+                                    <th>Sampling Amount</th>
+                                    <th>Avg Fish Long</th>
+                                    <th>Avg Fish Weight</th>
+                                    <th>Weight Limit</th>
+                                    <th>Sizeing</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+{% block plugins_js %}
+<script
+    src="{{url_for('static', filename='node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}"></script>
+{% endblock %}
+{% block page_js %}
+<script src="{{url_for('static', filename='js/custom_page/fishgrading/monthly.js')}}"></script>
+{% endblock %}
